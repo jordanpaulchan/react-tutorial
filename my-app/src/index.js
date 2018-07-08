@@ -30,37 +30,28 @@ function Square({ value, onClick }) {
   );
 }
 
-class Board extends React.Component {
-  renderSquare(i) {
-    return (
-      <Square
-        value={this.props.squares[i]}
-        onClick={() => this.props.onClick(i)}
-      />
-    );
-  }
+function Board({ squares, onClick }) {
+  const renderSquare = i => <Square value={squares[i]} onClick={onClick(i)} />;
 
-  render() {
-    return (
-      <div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
+  return (
+    <div>
+      <div className="board-row">
+        {renderSquare(0)}
+        {renderSquare(1)}
+        {renderSquare(2)}
       </div>
-    );
-  }
+      <div className="board-row">
+        {renderSquare(3)}
+        {renderSquare(4)}
+        {renderSquare(5)}
+      </div>
+      <div className="board-row">
+        {renderSquare(6)}
+        {renderSquare(7)}
+        {renderSquare(8)}
+      </div>
+    </div>
+  );
 }
 
 class Game extends React.Component {
@@ -74,7 +65,7 @@ class Game extends React.Component {
     xIsNext: true
   };
 
-  handleClick = i => {
+  handleClick = i => () => {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
@@ -83,19 +74,20 @@ class Game extends React.Component {
     }
 
     squares[i] = this.state.xIsNext ? "X" : "O";
-    this.setState((state, props) => ({
-      history: history.concat([
+    this.setState(state => ({
+      history: [
+        ...history,
         {
           squares: squares
         }
-      ]),
+      ],
       stepNumber: history.length,
       xIsNext: !state.xIsNext
     }));
   };
 
-  jumpTo = step => {
-    this.setState((state, props) => ({
+  jumpTo = step => () => {
+    this.setState(state => ({
       stepNumber: step,
       xIsNext: step % 2 === 0
     }));
@@ -110,7 +102,7 @@ class Game extends React.Component {
       const desc = `Go to ${move ? `move #${move}` : "game start"}`;
       return (
         <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{desc}</button>
+          <button onClick={this.jumpTo(move)}>{desc}</button>
         </li>
       );
     });
