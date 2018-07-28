@@ -74,7 +74,7 @@ class Game extends React.Component {
     }
 
     squares[i] = this.state.xIsNext ? "X" : "O";
-    this.setState(state => ({
+    this.setState(prevState => ({
       history: [
         ...history,
         {
@@ -82,12 +82,12 @@ class Game extends React.Component {
         }
       ],
       stepNumber: history.length,
-      xIsNext: !state.xIsNext
+      xIsNext: !prevState.xIsNext
     }));
   };
 
   jumpTo = step => () => {
-    this.setState(state => ({
+    this.setState(prevState => ({
       stepNumber: step,
       xIsNext: step % 2 === 0
     }));
